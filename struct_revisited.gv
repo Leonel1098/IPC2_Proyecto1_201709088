@@ -1,0 +1,16 @@
+digraph {
+	node [color=black shape=record style=filled]
+	1 [label=B]
+	node [color=black shape=record style=filled]
+	2 [label=B]
+	node [color=black shape=record style=filled]
+	3 [label=B]
+	node [color=black shape=record style=filled]
+	4 [label=B]
+	node [color=black shape=record style=filled]
+	5 [label=B]
+	structx [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="3" CELLPADDING="3">
+        <TR><TD  COLOR = "WHITE" BGCOLOR="BLACK">     </TD><TD  COLOR = "WHITE" BGCOLOR="BLACK">     </TD><TD  COLOR = "WHITE" BGCOLOR="BLACK">     </TD><TD  COLOR = "WHITE" BGCOLOR="BLACK">     </TD></TR><TR><TD  COLOR = "WHITE" BGCOLOR="BLACK">     </TD>
+        </TABLE>>]
+}
