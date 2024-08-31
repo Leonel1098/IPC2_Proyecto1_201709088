@@ -1,6 +1,9 @@
 from tkinter import Tk, filedialog
 import xml.etree.ElementTree as ET
+from graphviz import Digraph
 import graphviz
+from ListaCircular import ListaCircularEnlazada
+
 
 def cargarArchivo():
 
@@ -11,14 +14,59 @@ def cargarArchivo():
     archivo = filedialog.askopenfilename()
     print("Archivo Seleccionado: ", archivo)
    
+    with open(archivo, "r", encoding="utf8") as archivo_texto:
+        contenido = archivo_texto.read()
+        print("\n", contenido)
     
-    archivo_texto = open(archivo, "r", encoding="utf8")
-    print("\n",archivo_texto.read())
-    #archivo_texto.close()
-    #lecturaXml(archivo)
-    print( "\n Carga Exitosa")
+    print("Carga Exitosa")
+    return archivo
 
 
+
+
+def leer_matrices_desde_xml(archivo):
+        tree = ET.parse(archivo)
+        root = tree.getroot()
+        lista_circular = ListaCircularEnlazada()
+
+        for matriz_elem in root.findall('matriz'):
+            n = int(matriz_elem.get('n'))
+            m = int(matriz_elem.get('m'))
+            matriz = [[0] * m for _ in range(n)]
+
+            for dato_elem in matriz_elem.findall('dato'):
+                x = int(dato_elem.get('x')) - 1
+                y = int(dato_elem.get('y')) - 1
+                valor = int(dato_elem.text)
+                matriz[x][y] = valor
+
+            lista_circular.insertar(matriz)
+
+        return lista_circular
+
+    # Función para graficar una matriz con Graphviz
+def graficar_matriz(matriz, nombre_archivo):
+    dot = Digraph(comment='Matriz')
+    filas = len(matriz)
+    columnas = len(matriz[0])
+
+    for i in range(filas):
+        for j in range(columnas):
+            dot.node(f'{i}_{j}', label=str(matriz[i][j]))
+
+    for i in range(filas):
+        for j in range(columnas):
+            if j < columnas - 1:
+                dot.edge(f'{i}_{j}', f'{i}_{j+1}')
+            if i < filas - 1:
+                dot.edge(f'{i}_{j}', f'{i+1}_{j}')
+
+    dot.render(nombre_archivo, format='png', cleanup=True)
+
+# Función para graficar todas las matrices en la lista circular
+def graficar_listas_circulares(lista_circular):
+    for i, matriz in enumerate(lista_circular.recorrer()):
+        graficar_matriz(matriz, f'matriz_{i}')
 
 def grafica(cod,columnas,filas):
     contfilas = 1
@@ -63,9 +111,6 @@ def grafica(cod,columnas,filas):
                 contfilas += 1
             else:
                 break
-        
-
-   
     grafica.node('structx', '''<
         <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="3" CELLPADDING="3">
         '''
@@ -93,7 +138,7 @@ def Menu():
 
         if opcion == "1":
             print("")
-            cargarArchivo()
+            archivo = cargarArchivo()
         
         elif opcion == "2":
             print("")
@@ -110,7 +155,8 @@ def Menu():
         
         elif opcion == "5":
             print("\nGenerar Grafica\n")
-            grafica()
+            lista_circular = leer_matrices_desde_xml(archivo)
+            graficar_listas_circulares(lista_circular)
 
         elif opcion == "6":
             print("")
