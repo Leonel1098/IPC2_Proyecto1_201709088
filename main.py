@@ -41,13 +41,13 @@ def lecturaMatrices(archivo):
             y = int(elementos_dato.get('y')) - 1
 
             valor = int(elementos_dato.text)
-            print(f"Inserting value {valor} at position ({x}, {y})")
+            #print(f"Inserting value {valor} at position ({x}, {y})")
             matriz.insertar_valor(x, y, valor)
 
     return lista_matrices
 
 def imprimir_matrices(lista_matrices):
-    lista_matrices.imprimir_todas()
+    lista_matrices.imprimir_todass()
 
     # Función para graficar una matriz con Graphviz
 def graficar_matriz(matriz, nombre_archivo):
@@ -93,14 +93,19 @@ def Menu():
         
         elif opcion == "2":
             print("")
-            #menu2()
-            print("Procesar Archivo")
             lista_matrices = lecturaMatrices(archivo)
-            imprimir_matrices(lista_matrices)
+            lista_matrices.imprimir_todas()
+
+            # Luego, selecciona una matriz
+            indice_seleccionado = int(input("Ingresa el índice de la matriz que deseas seleccionar: "))
+            lista_matrices.elegir_matriz(indice_seleccionado)
+           
 
         elif opcion == "3":
             print("")
            # pisos.mostrarPisos_Orden()
+            
+            #imprimir_con_indices()
             print("Escribir Archivo de Salida ")
 
         elif opcion == "4":

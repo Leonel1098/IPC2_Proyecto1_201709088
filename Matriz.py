@@ -3,6 +3,8 @@ class Matriz:
 
     def __init__(self,nombre,n,m):
         self.nombre = nombre
+        self.n = n
+        self.m = m
         self.filas = ListaCircularEnlazada()
 
         for i in range(n):
@@ -23,7 +25,6 @@ class Matriz:
                 print(fila.obtener_info(j), end=" ")
             print()  # Nueva línea al final de cada fila
 
-    
     
 
     

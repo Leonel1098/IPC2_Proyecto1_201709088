@@ -47,3 +47,29 @@ class ListaCircularEnlazada:
                 actual = actual.siguiente
                 if actual == self.primero:
                     break
+        
+        def contar_matrices(self):
+            if not self.primero:
+                return 0
+            contador = 1
+            actual = self.primero
+            while actual.siguiente != self.primero:
+                contador += 1
+                actual = actual.siguiente
+            return contador            
+
+
+        def imprimir_matrices_con_indices(self):
+            if not self.primero:
+                print("La lista está vacía.")
+                return
+            
+            actual = self.primero
+            indice = 0
+            
+            while True:
+                print(f"Índice {indice}: Matriz {actual.matriz.nombre} ({actual.matriz.n}x{actual.matriz.m})")
+                indice += 1
+                actual = actual.siguiente
+                if actual == self.primero:
+                    break
