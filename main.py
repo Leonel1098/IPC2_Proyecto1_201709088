@@ -3,7 +3,8 @@ import xml.etree.ElementTree as ET
 from graphviz import Digraph
 import graphviz
 from ListaCircular import ListaCircularEnlazada
-
+from Matriz import Matriz
+from ListaEnlazada import Lista_Enlazada
 
 def cargarArchivo():
 
@@ -14,51 +15,56 @@ def cargarArchivo():
     archivo = filedialog.askopenfilename()
     print("Archivo Seleccionado: ", archivo)
    
-    with open(archivo, "r", encoding="utf8") as archivo_texto:
-        contenido = archivo_texto.read()
+    with open(archivo, "r", encoding="utf8") as texto_archivo:
+        contenido = texto_archivo.read()
         print("\n", contenido)
     
     print("Carga Exitosa")
     return archivo
 
 
+def lecturaMatrices(archivo):
+    tree = ET.parse(archivo)
+    root = tree.getroot()
+    lista_matrices = Lista_Enlazada()
 
+    for elementos_matriz in root.findall('matriz'):
+        nombre = elementos_matriz.get("nombre")
+        n = int(elementos_matriz.get('n'))
+        m = int(elementos_matriz.get('m'))
+        
+        lista_matrices.insertar_matriz(nombre, n, m)
+        matriz = lista_matrices.obtener_matriz(lista_matrices.contar_matrices() - 1)
 
-def leer_matrices_desde_xml(archivo):
-        tree = ET.parse(archivo)
-        root = tree.getroot()
-        lista_circular = ListaCircularEnlazada()
+        for elementos_dato in elementos_matriz.findall('dato'):
+            x = int(elementos_dato.get('x')) - 1
+            y = int(elementos_dato.get('y')) - 1
 
-        for matriz_elem in root.findall('matriz'):
-            n = int(matriz_elem.get('n'))
-            m = int(matriz_elem.get('m'))
-            matriz = [[0] * m for _ in range(n)]
+            valor = int(elementos_dato.text)
+            print(f"Inserting value {valor} at position ({x}, {y})")
+            matriz.insertar_valor(x, y, valor)
 
-            for dato_elem in matriz_elem.findall('dato'):
-                x = int(dato_elem.get('x')) - 1
-                y = int(dato_elem.get('y')) - 1
-                valor = int(dato_elem.text)
-                matriz[x][y] = valor
+    return lista_matrices
 
-            lista_circular.insertar(matriz)
-
-        return lista_circular
+def imprimir_matrices(lista_matrices):
+    lista_matrices.imprimir_todas()
 
     # Función para graficar una matriz con Graphviz
 def graficar_matriz(matriz, nombre_archivo):
     dot = Digraph(comment='Matriz')
-    filas = len(matriz)
-    columnas = len(matriz[0])
+    filas = matriz.contar_filas()
 
     for i in range(filas):
+        columnas = matriz.contar_columnas(i)
         for j in range(columnas):
-            dot.node(f'{i}_{j}', label=str(matriz[i][j]))
+            valor = matriz.obtener_valor(i, j)
+            print(f"Value at ({i}, {j}) is {valor}")
+            dot.node(f'{i}_{j}', label=str(valor))
 
-    for i in range(filas):
         for j in range(columnas):
             if j < columnas - 1:
                 dot.edge(f'{i}_{j}', f'{i}_{j+1}')
-            if i < filas - 1:
+            if i < filas - 1 and matriz.contar_columnas(i+1) > j:
                 dot.edge(f'{i}_{j}', f'{i+1}_{j}')
 
     dot.render(nombre_archivo, format='png', cleanup=True)
@@ -67,61 +73,6 @@ def graficar_matriz(matriz, nombre_archivo):
 def graficar_listas_circulares(lista_circular):
     for i, matriz in enumerate(lista_circular.recorrer()):
         graficar_matriz(matriz, f'matriz_{i}')
-
-def grafica(cod,columnas,filas):
-    contfilas = 1
-    print("Matriz de:...")
-    print(columnas, "  Columnas")
-    print( filas, "  Filas ")
-    fila =''
-    cont = 0
-    cn=1
-    contenidoTabla = '''<TR>'''
-    grafica = graphviz.digraph(filename='structs_revisited.gv')
-    
-    for c in cod:
-        if c == 'B':
-            grafica.attr('node',shape='record', style='filled', color='black')
-            grafica.node(str(cn) ,label= c)
-            contenidoTabla += '<TD  COLOR = "WHITE" BGCOLOR="BLACK">     </TD>'
-            
-            cn += 1
-            cont += 1
-            fila += c
-        elif c=='W':
-            grafica.attr('node',shape='record', style='filled',color="lightgrey",bgcolor='black')
-            grafica.node(str(cn) ,label= c)
-            contenidoTabla += '<TD   COLOR = "BLACK" BGCOLOR="WHITE">     </TD>'
-            cn += 1
-            cont += 1
-            
-            fila += c
-
-       
-        if cont >= int(columnas):
-            print(fila)
-            fila = ''
-            cont = 0
-            
-            
-            contenidoTabla +='</TR>'
-            if contfilas != int(filas):
-
-                contenidoTabla +='<TR>'
-                contfilas += 1
-            else:
-                break
-    grafica.node('structx', '''<
-        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="3" CELLPADDING="3">
-        '''
-        +contenidoTabla+
-        '''
-        </TABLE>>''')     
-            
-    grafica.view()
-
-
-
 
 def Menu():
     while  True:
@@ -144,6 +95,8 @@ def Menu():
             print("")
             #menu2()
             print("Procesar Archivo")
+            lista_matrices = lecturaMatrices(archivo)
+            imprimir_matrices(lista_matrices)
 
         elif opcion == "3":
             print("")
@@ -155,7 +108,7 @@ def Menu():
         
         elif opcion == "5":
             print("\nGenerar Grafica\n")
-            lista_circular = leer_matrices_desde_xml(archivo)
+            lista_circular = lecturaMatrices(archivo)
             graficar_listas_circulares(lista_circular)
 
         elif opcion == "6":
