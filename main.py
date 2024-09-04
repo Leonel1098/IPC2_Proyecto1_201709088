@@ -49,30 +49,6 @@ def lecturaMatrices(archivo):
 def imprimir_matrices(lista_matrices):
     lista_matrices.imprimir_todass()
 
-    # Función para graficar una matriz con Graphviz
-def graficar_matriz(matriz, nombre_archivo):
-    dot = Digraph(comment='Matriz')
-    filas = matriz.contar_filas()
-
-    for i in range(filas):
-        columnas = matriz.contar_columnas(i)
-        for j in range(columnas):
-            valor = matriz.obtener_valor(i, j)
-            print(f"Value at ({i}, {j}) is {valor}")
-            dot.node(f'{i}_{j}', label=str(valor))
-
-        for j in range(columnas):
-            if j < columnas - 1:
-                dot.edge(f'{i}_{j}', f'{i}_{j+1}')
-            if i < filas - 1 and matriz.contar_columnas(i+1) > j:
-                dot.edge(f'{i}_{j}', f'{i+1}_{j}')
-
-    dot.render(nombre_archivo, format='png', cleanup=True)
-
-# Función para graficar todas las matrices en la lista circular
-def graficar_listas_circulares(lista_circular):
-    for i, matriz in enumerate(lista_circular.recorrer()):
-        graficar_matriz(matriz, f'matriz_{i}')
 
 def Menu():
     while  True:
@@ -99,7 +75,13 @@ def Menu():
             # Luego, selecciona una matriz
             indice_seleccionado = int(input("Ingresa el índice de la matriz que deseas seleccionar: "))
             lista_matrices.elegir_matriz(indice_seleccionado)
-           
+            # ...
+            matriz_reducida = lista_matrices.matriz_reducida(indice_seleccionado)
+            
+            # Imprimir la matriz reducida
+            print("Matriz reducida:")
+            matriz_reducida.imprimir_matriz()
+
 
         elif opcion == "3":
             print("")
@@ -114,7 +96,7 @@ def Menu():
         elif opcion == "5":
             print("\nGenerar Grafica\n")
             lista_circular = lecturaMatrices(archivo)
-            graficar_listas_circulares(lista_circular)
+            #graficar_listas_circulares(lista_circular)
 
         elif opcion == "6":
             print("")
