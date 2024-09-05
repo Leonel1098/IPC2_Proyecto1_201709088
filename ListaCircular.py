@@ -1,4 +1,6 @@
 from Nodo import Nodo
+
+#Con esta lista circular gestionamos las matrices del archivo xml
 class ListaCircularEnlazada:
     
     def __init__(self):

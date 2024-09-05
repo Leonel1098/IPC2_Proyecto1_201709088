@@ -1,6 +1,7 @@
 from ListaCircular import ListaCircularEnlazada
 from Matriz import Matriz
 
+#Con esta lista se manejan las matrices obrenidoas con la lista circular y tambien las matrcies de patrones
 class Lista_Enlazada:
     def __init__(self):
         self.matrices = ListaCircularEnlazada()
@@ -63,20 +64,20 @@ class Lista_Enlazada:
         for i in range(matriz_original.n):
             fila_actual = matriz_original.obtener_fila(i)
 
-            print(f"Procesando fila {i}:")
-            fila_actual.imprimir_fila()  # Imprime la fila actual para depurar
+            print(f"\nProcesando fila {i}:")
+            fila_actual.imprimir_fila()  
 
             # Verificar si ya existe una fila similar procesada
             fila_similar = self.obtener_fila_similar(filas_procesadas, fila_actual)
 
             if fila_similar is not None:
                 print(f"Fila similar encontrada, sumando:")
-                fila_similar.imprimir_fila()  # Imprime la fila similar para depurar
+                fila_similar.imprimir_fila() 
                 self.sumar_fila(fila_similar, fila_actual)
                 print("Resultado de la suma:")
-                fila_similar.imprimir_fila()  # Verifica el resultado de la suma
+                fila_similar.imprimir_fila() 
             else:
-                print("No se encontró fila similar, agregando la fila actual.")
+                print("\nNo se encontró fila similar, agregando la fila actual.")
                 filas_procesadas.insertar(fila_actual)
         
         # Crear la matriz reducida basada en las filas procesadas
@@ -114,12 +115,6 @@ class Lista_Enlazada:
             
             if nodo_destino == fila_destino.primero or nodo_origen == fila_origen.primero:
                 break
-
-
-
-
-
-
 
     def fila_ya_procesada(self, filas_procesadas, fila):
         for fila_procesada in filas_procesadas.recorrer():
